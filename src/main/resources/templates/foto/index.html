@@ -28,7 +28,10 @@
         <td><img th:src="${foto.pictureUrl}" width="100px"></td>
         <td th:text="${foto.title}"></td>
         <td th:text="${foto.visible ? 'Si' : 'No'}"></td>
-        <td><a th:href="|/foto/${foto.id}|"><i class="text-warning fa-solid fa-eye"></i></a></td>
+        <td>
+            <a th:href="|/foto/${foto.id}|"><i class="text-warning fa-solid fa-eye"></i></a>
+            <a th:href="|/foto/edit/${foto.id}|"><i class="text-warning fa-solid fa-pencil"></i></a>
+        </td>
     </tr>
     </tbody>
 </table>

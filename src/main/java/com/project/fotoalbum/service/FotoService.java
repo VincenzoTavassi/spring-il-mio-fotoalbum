@@ -54,6 +54,17 @@ public class FotoService {
         return fotoRepository.save(foto);
     }
 
+    public Foto edit(Foto foto) throws FotoNotFoundException {
+        Foto fotoToUpdate = getById(foto.getId()); // Recupero la foto da modificare
+        fotoToUpdate.setUpdatedAt(LocalDateTime.now());
+        fotoToUpdate.setCategories(foto.getCategories());
+        fotoToUpdate.setDescription(foto.getDescription());
+        fotoToUpdate.setTitle(foto.getTitle());
+        fotoToUpdate.setPictureUrl(foto.getPictureUrl());
+        fotoToUpdate.setVisible(foto.isVisible());
+        return fotoRepository.save(fotoToUpdate);
+    }
+
     private boolean fotoExists(Integer id) throws FotoNotFoundException {
         Optional<Foto> foundFoto = fotoRepository.findById(id);
         if (foundFoto.isPresent()) return true;

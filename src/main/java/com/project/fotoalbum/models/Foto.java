@@ -15,7 +15,7 @@ public class Foto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @NotNull
-    @NotBlank
+    @NotBlank(message = "Il titolo deve essere valorizzato")
     @Column(nullable = false)
     private String title;
     private String pictureUrl;

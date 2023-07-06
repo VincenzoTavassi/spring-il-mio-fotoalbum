@@ -1,5 +1,6 @@
 package com.project.fotoalbum.controllers;
 
+import com.project.fotoalbum.exceptions.FotoNotFoundException;
 import com.project.fotoalbum.messages.Message;
 import com.project.fotoalbum.messages.MessageType;
 import com.project.fotoalbum.models.Category;
@@ -75,6 +76,34 @@ public class FotoController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
         redirectAttributes.addFlashAttribute("message", new Message(MessageType.SUCCESS, "Foto creata con successo."));
+        return "redirect:/foto";
+    }
+
+    @GetMapping("foto/edit/{id}")
+    public String edit(@PathVariable Integer id, Model model) {
+        try {
+            Foto fotoToUpdate = fotoService.getById(id);
+            model.addAttribute("foto", fotoToUpdate);
+        } catch (FotoNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+        return "foto/form";
+    }
+
+    @PostMapping("foto/edit")
+    public String update(
+            @Valid @ModelAttribute("foto") Foto foto,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes
+            ) {
+
+        if (bindingResult.hasErrors()) return "foto/form";
+        try {
+            fotoService.edit(foto);
+        } catch (FotoNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+        redirectAttributes.addFlashAttribute("message", new Message(MessageType.SUCCESS, "Foto modificata con successo."));
         return "redirect:/foto";
     }
 

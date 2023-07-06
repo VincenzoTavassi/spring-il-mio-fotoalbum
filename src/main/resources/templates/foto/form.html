@@ -5,11 +5,12 @@
 <div class="container">
     <h1 class="text-center my-3" th:text="${isEdit ? 'Modifica foto ' + foto.title : 'Crea una nuova foto'}"></h1>
 <form
-        th:with="formAction=${isEdit ? '/foto/edit/' + foto.id : '/foto/create'}"
+        th:with="formAction=${isEdit ? '/foto/edit' : '/foto/create'}"
         th:action="${formAction}"
         method="POST"
         th:object="${foto}"
         class="row my-3 justify-content-center">
+    <input th:if="${isEdit}" type="hidden" th:field="*{id}">
 
     <div class="col-3">
         <label for="foto-title">Titolo della foto</label>
