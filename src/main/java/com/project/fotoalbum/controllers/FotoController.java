@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -13,18 +14,31 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/foto")
+@RequestMapping("/")
 public class FotoController {
 
     @Autowired
     FotoService fotoService;
+
+
     @GetMapping
+    public String index() {
+        return "redirect:/foto";
+    }
+    @GetMapping("/foto")
     public String index(@RequestParam Optional<String> keyword, Model model) {
         List<Foto> fotoList = null;
         if (keyword.isPresent()) fotoList = fotoService.getAll(false, keyword);
         else fotoList = fotoService.getAll(false, Optional.empty());
         model.addAttribute("fotoList", fotoList);
         return "foto/index";
+    }
+
+    @GetMapping("/foto/{id}")
+    public String show(@PathVariable Integer id, Model model) {
+        Foto foto = fotoService.getById(id);
+        model.addAttribute("foto", foto);
+        return "foto/show";
     }
 
 }

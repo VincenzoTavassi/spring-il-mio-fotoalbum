@@ -1,5 +1,6 @@
 package com.project.fotoalbum.service;
 
+import com.project.fotoalbum.exceptions.FotoNotFoundException;
 import com.project.fotoalbum.models.Foto;
 import com.project.fotoalbum.repository.FotoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ public class FotoService {
 @Autowired
     FotoRepository fotoRepository;
 
-// Ottieni tutte le foto con query param opzionale
+// Ottieni tutte le foto con query param opzionale e booleano visibile
     public List<Foto> getAll(boolean visible, Optional<String> keyword) {
         List<Foto> fotoList = null;
         if (visible) { // Se la richiesta è per le foto visibili
@@ -31,6 +32,20 @@ public class FotoService {
                 fotoList = fotoRepository.findAll();
         }
         return fotoList;
+    }
+
+    // Ottieni foto specifica
+    public Foto getById(Integer id) throws FotoNotFoundException {
+        Foto foto = null;
+        if (fotoExists(id)) foto = fotoRepository.findById(id).get();
+        return foto;
+    }
+
+
+    private boolean fotoExists(Integer id) throws FotoNotFoundException {
+        Optional<Foto> foundFoto = fotoRepository.findById(id);
+        if (foundFoto.isPresent()) return true;
+        else throw new FotoNotFoundException();
     }
 
 }
