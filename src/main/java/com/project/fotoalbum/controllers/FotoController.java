@@ -111,4 +111,16 @@ public class FotoController {
         return "redirect:/foto";
     }
 
+    @PostMapping("foto/delete/{id}")
+    public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+       try {
+           fotoService.delete(id);
+       } catch (FotoNotFoundException e) {
+           throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+       }
+        redirectAttributes.addFlashAttribute("message", new Message(MessageType.SUCCESS, "Foto eliminata con successo."));
+       return "redirect:/foto";
+
+    }
+
 }

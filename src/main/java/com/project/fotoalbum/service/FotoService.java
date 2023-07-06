@@ -65,6 +65,10 @@ public class FotoService {
         return fotoRepository.save(fotoToUpdate);
     }
 
+    public void delete(Integer id) throws FotoNotFoundException {
+        fotoRepository.delete(getById(id));
+    }
+
     private boolean fotoExists(Integer id) throws FotoNotFoundException {
         Optional<Foto> foundFoto = fotoRepository.findById(id);
         if (foundFoto.isPresent()) return true;

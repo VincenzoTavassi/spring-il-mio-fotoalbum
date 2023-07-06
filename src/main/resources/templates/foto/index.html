@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{/fragments/resources :: head(title = 'Lista delle foto')}">
-<body>
+<body class="bg-black">
 
 <div class="container">
-<h1 class="text-center my-3">Lista delle foto</h1>
+<h1 class="text-center text-warning my-3">Lista delle foto</h1>
     <div th:if="${message != null}">
         <div class="alert alert-success" role="alert" th:text="${message.message}">
         </div>
@@ -31,6 +31,7 @@
         <td>
             <a th:href="|/foto/${foto.id}|"><i class="text-warning fa-solid fa-eye"></i></a>
             <a th:href="|/foto/edit/${foto.id}|"><i class="text-warning fa-solid fa-pencil"></i></a>
+            <form class="d-inline-block" th:action="|/foto/delete/${foto.id}|" method="POST"><button class="border-0 text-primary bg-transparent" type="submit"><i class="text-danger fa-solid fa-trash"></i></button></form>
         </td>
     </tr>
     </tbody>
