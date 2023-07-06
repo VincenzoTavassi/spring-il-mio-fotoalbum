@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymelaf.org">
+<head th:replace="~{/fragments/resources :: head(title = 'Error')}">
+<body>
+<div class="container min-vh-100 d-flex flex-column align-items-center justify-content-center gap-4">
+    <h1>Error</h1>
+    <p th:text="${message}"></p>
+    <a href="/">Torna alla home</a>
+</div>
+</body>
+</html>
