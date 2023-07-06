@@ -84,6 +84,7 @@ public class FotoController {
         try {
             Foto fotoToUpdate = fotoService.getById(id);
             model.addAttribute("foto", fotoToUpdate);
+            model.addAttribute("categories", categoryRepository.findAll());
         } catch (FotoNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -94,10 +95,13 @@ public class FotoController {
     public String update(
             @Valid @ModelAttribute("foto") Foto foto,
             BindingResult bindingResult,
-            RedirectAttributes redirectAttributes
+            RedirectAttributes redirectAttributes,
+            Model model
             ) {
-
-        if (bindingResult.hasErrors()) return "foto/form";
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("categories", categoryRepository.findAll());
+            return "foto/form";
+        }
         try {
             fotoService.edit(foto);
         } catch (FotoNotFoundException e) {
