@@ -2,11 +2,36 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{/fragments/resources :: head(title = 'Lista delle foto')}">
 <body>
-<h1 class="text-center">Lista delle foto</h1>
 
-
-
-
-<p th:each="foto : ${fotoList}" th:text="${foto.title}"></p>
+<div class="container">
+<h1 class="text-center my-3">Lista delle foto</h1>
+    <div th:if="${message != null}">
+        <div class="alert alert-success" role="alert" th:text="${message.message}">
+        </div>
+    </div>
+    <div class="bg-dark p-3">
+    <a class="btn btn-outline-warning" href="/foto/create">Aggiungi Foto</a>
+    </div>
+<table class="table table-dark table-striped">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Immagine</th>
+        <th scope="col">Titolo</th>
+        <th scope="col">Visibile</th>
+        <th scope="col">Azioni</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="foto : ${fotoList}" class="align-middle">
+        <th scope="row" th:text="${foto.id}"></th>
+        <td><img th:src="${foto.pictureUrl}" width="100px"></td>
+        <td th:text="${foto.title}"></td>
+        <td th:text="${foto.visible ? 'Si' : 'No'}"></td>
+        <td><a th:href="|/foto/${foto.id}|"><i class="text-warning fa-solid fa-eye"></i></a></td>
+    </tr>
+    </tbody>
+</table>
+</div>
 </body>
 </html>

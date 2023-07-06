@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,9 @@ public class Foto {
 
     @ManyToMany
     private List<Category> categories = new ArrayList<>();
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public Integer getId() {
         return id;
@@ -71,5 +75,21 @@ public class Foto {
 
     public void setCategories(List<Category> categories) {
         this.categories = categories;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

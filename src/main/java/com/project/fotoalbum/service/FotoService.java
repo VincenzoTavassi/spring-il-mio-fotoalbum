@@ -3,11 +3,13 @@ package com.project.fotoalbum.service;
 import com.project.fotoalbum.exceptions.FotoNotFoundException;
 import com.project.fotoalbum.models.Foto;
 import com.project.fotoalbum.repository.FotoRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,6 +43,16 @@ public class FotoService {
         return foto;
     }
 
+    public Foto create(Foto foto) {
+        Foto fotoToSave = new Foto();
+        fotoToSave.setCreatedAt(LocalDateTime.now());
+        fotoToSave.setCategories(foto.getCategories());
+        fotoToSave.setDescription(foto.getDescription());
+        fotoToSave.setTitle(foto.getTitle());
+        fotoToSave.setPictureUrl(foto.getPictureUrl());
+        fotoToSave.setVisible(foto.isVisible());
+        return fotoRepository.save(foto);
+    }
 
     private boolean fotoExists(Integer id) throws FotoNotFoundException {
         Optional<Foto> foundFoto = fotoRepository.findById(id);

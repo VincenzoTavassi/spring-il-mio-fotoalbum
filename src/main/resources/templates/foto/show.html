@@ -2,12 +2,37 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{/fragments/resources :: head(title = 'Dettaglio Foto ' + ${foto.title})}">
 <body>
-<p th:text="${foto.title}"></p>
-<p th:text="${foto.description}"></p>
-<p th:text="${foto.pictureUrl}"></p>
-<p th:text="${foto.id}"></p>
-<p th:text="${foto.visible}"></p>
-<p th:each="category : ${foto.categories}" th:text="${category.name}"></p>
+<div class="container">
+<h1 class="text-center my-3" th:text="|Dettaglio foto ${foto.title}|"></h1>
+<div class="row justify-content-center">
+    <div class="card col-8">
+    <div class="card-body d-flex">
+        <div>
+    <img th:src="${foto.pictureUrl}" width="250px" th:alt="${foto.title}">
+        </div>
+        <div class="mx-5">
+        <h5 class="card-title" th:text="${foto.title}"></h5>
+        <p class="card-text" th:text="${foto.description}"></p>
+        <h5>Categorie:</h5>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item" th:each="category : ${foto.categories}" th:text="${category.name}"></li>
+    </ul>
+        <h5>Visibile</h5>
+        <p th:text="${foto.visible ? 'Si' : 'No'}"></p>
+        <h5>Url immagine</h5>
+        <p th:text="${foto.pictureUrl}"></p>
+        <h5 class="small">Data inserimento</h5>
+        <p th:text="*{#temporals.format(foto.createdAt, 'dd/MM/yyyy')}"></p>
+        <h5 class="small">Ultimo aggiornamento</h5>
+        <p th:text="*{#temporals.format(foto.updatedAt, 'dd/MM/yyyy')}"></p>
+        </div>
+    </div>
+    <div class="card-body text-center">
+        <a href="/" class="card-link">Torna alla home</a>
+    </div>
+</div>
 
+</div>
+</div>
 </body>
 </html>

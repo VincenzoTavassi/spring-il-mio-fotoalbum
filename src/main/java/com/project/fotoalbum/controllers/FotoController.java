@@ -1,14 +1,20 @@
 package com.project.fotoalbum.controllers;
 
+import com.project.fotoalbum.messages.Message;
+import com.project.fotoalbum.messages.MessageType;
+import com.project.fotoalbum.models.Category;
 import com.project.fotoalbum.models.Foto;
+import com.project.fotoalbum.repository.CategoryRepository;
 import com.project.fotoalbum.service.FotoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +25,9 @@ public class FotoController {
 
     @Autowired
     FotoService fotoService;
+
+    @Autowired
+    CategoryRepository categoryRepository;
 
 
     @GetMapping
@@ -39,6 +48,34 @@ public class FotoController {
         Foto foto = fotoService.getById(id);
         model.addAttribute("foto", foto);
         return "foto/show";
+    }
+
+    @GetMapping("foto/create")
+    public String create(Model model) {
+        Foto foto = new Foto();
+        List<Category> categories = categoryRepository.findAll();
+        model.addAttribute("foto", foto);
+        model.addAttribute("categories", categories);
+        return "foto/form";
+    }
+
+    @PostMapping("foto/create")
+    public String create(
+            @Valid @ModelAttribute("foto") Foto foto,
+            BindingResult bindingResult,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+        if(bindingResult.hasErrors()) {
+            model.addAttribute("categories", categoryRepository.findAll());
+            return "foto/form";
+        }
+        try {
+            fotoService.create(foto);
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        redirectAttributes.addFlashAttribute("message", new Message(MessageType.SUCCESS, "Foto creata con successo."));
+        return "redirect:/foto";
     }
 
 }
