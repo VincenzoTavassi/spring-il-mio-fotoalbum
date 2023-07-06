@@ -9,8 +9,14 @@
         <div class="alert alert-success" role="alert" th:text="${message.message}">
         </div>
     </div>
-    <div class="bg-dark p-3">
+    <div class="bg-dark p-3 d-flex justify-content-between align-items-center">
     <a class="btn btn-outline-warning" href="/foto/create">Aggiungi Foto</a>
+            <form action="/foto" method="GET">
+        <div class="input-group mb-3">
+            <button class="btn btn-outline-warning" type="submit" id="button-addon1">Cerca</button>
+            <input type="text" class="form-control" placeholder="" name="keyword" th:value="${keyword}">
+        </div>
+            </form>
     </div>
 <table class="table table-dark table-striped">
     <thead>

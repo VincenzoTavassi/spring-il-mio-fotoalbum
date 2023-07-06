@@ -41,6 +41,7 @@ public class FotoController {
         if (keyword.isPresent()) fotoList = fotoService.getAll(false, keyword);
         else fotoList = fotoService.getAll(false, Optional.empty());
         model.addAttribute("fotoList", fotoList);
+        model.addAttribute("keyword", keyword.orElse(""));
         return "foto/index";
     }
 
@@ -120,7 +121,6 @@ public class FotoController {
        }
         redirectAttributes.addFlashAttribute("message", new Message(MessageType.SUCCESS, "Foto eliminata con successo."));
        return "redirect:/foto";
-
     }
 
 }
