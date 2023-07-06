@@ -1,7 +1,11 @@
 package com.project.fotoalbum.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +17,8 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @NotNull
-    @Column(nullable = false)
+    @NotBlank(message = "Non può essere vuoto")
+    @Column(nullable = false, unique = true)
     private String name;
 
     @ManyToMany(mappedBy = "categories")
