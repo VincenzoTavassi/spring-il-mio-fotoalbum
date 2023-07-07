@@ -26,7 +26,9 @@ public class FotoRestController {
     @GetMapping("/{id}")
     public Foto show(@PathVariable Integer id) {
         try {
-            return fotoService.getById(id);
+            Foto foto = fotoService.getById(id);
+            if (foto.isVisible()) return foto;
+            else throw new ResponseStatusException(HttpStatus.FORBIDDEN, "La foto con id " + foto.getId() + " non è accessibile");
         } catch (FotoNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
