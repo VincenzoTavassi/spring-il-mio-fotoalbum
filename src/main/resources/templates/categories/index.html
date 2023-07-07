@@ -12,15 +12,15 @@
                     <div class="d-flex justify-content-between">
                         <form th:action="@{/categories/edit(categoryId = ${category.id})}" method="POST">
                             <input type="text" th:value="${category.name}" name="name">
-                            <button class="btn btn-outline-secondary mx-3" type="submit">Modifica</button>
+                            <button class="btn btn-outline-warning mx-3" type="submit">Modifica</button>
                         </form>
                         <div th:if="${category.fotos.size == 0}" class="d-flex">
                             <form th:action="@{/categories/delete(categoryId = ${category.id})}" method="POST">
-                                <button class="btn btn-outline-secondary mx-3" type="submit">Elimina</button>
+                                <button class="btn btn-outline-warning mx-3" type="submit">Elimina</button>
                             </form>
                         </div>
                         <div th:if="${category.fotos.size > 0}" class="d-flex">
-                                <button class="btn btn-outline-secondary mx-3" type="submit" disabled>Elimina</button>
+                                <button class="btn btn-outline-warning mx-3" type="submit" disabled>Elimina</button>
                         </div>
                     </div>
                     <div class="w-75 my-2" th:if="${message != null && category.id == categoryId}">
@@ -43,7 +43,7 @@
                     <div th:each="error : ${#fields.errors('category.name')}" th:text="${error}"></div>
                 </div>
                 </div>
-                <button class="btn btn-outline-secondary mx-3" type="submit">Aggiungi</button>
+                <button class="btn btn-outline-warning mx-3" type="submit">Aggiungi</button>
             </form>
         </div>
 
