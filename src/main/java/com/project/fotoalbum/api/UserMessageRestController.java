@@ -49,7 +49,7 @@ public class UserMessageRestController {
         if (foundMessage.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         else {
             foundMessage.get().setRead(!foundMessage.get().isRead());
-            return foundMessage.get();
+            return userMessageRepository.save(foundMessage.get());
         }
     }
 
