@@ -123,6 +123,7 @@ public class FotoService {
         fotoForm.setTitle(foto.getTitle());
         fotoForm.setDescription(foto.getDescription());
         fotoForm.setPictureUrl(foto.getPictureUrl());
+        fotoForm.setVisible(foto.isVisible());
         fotoForm.setCategories(foto.getCategories());
         return fotoForm;
     }
