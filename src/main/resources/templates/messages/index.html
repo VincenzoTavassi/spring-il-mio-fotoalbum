@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{/fragments/resources :: head(title = 'Lista dei messaggi')}">
+<body class="bg-black">
+
+<div class="container">
+    <h1 class="text-center text-warning my-3">Lista dei messaggi</h1>
+    <div class="bg-dark p-3 d-flex justify-content-between align-items-center">
+        <div>
+            <a class="btn btn-outline-warning" href="/foto">Lista delle Foto</a>
+            <a class="btn btn-outline-warning" href="/foto/create">Aggiungi Foto</a>
+            <a class="btn btn-outline-warning" href="/categories">Categorie</a>
+        </div>
+    </div>
+    <table class="table table-dark table-striped">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">E-mail</th>
+            <th scope="col">Testo</th>
+            <th scope="col">Data</th>
+            <th scope="col">Azioni</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="message : ${messages}" class="align-middle" th:class="${!message.isRead ? 'fw-bolder' : ''}">
+            <th scope="row" th:text="${message.id}"></th>
+            <td th:text="${message.email}"></td>
+            <td th:text="${message.text}"></td>
+            <td th:text="*{#temporals.format(message.createdAt, 'dd/MM/yyyy')}"></td>
+            <td>
+                <a th:href="|/messages/${message.id}|"><i class="text-warning fa-solid fa-eye"></i></a>
+                <form class="d-inline-block" th:action="|/messages/read/${message.id}?read=${!message.isRead}|" method="POST"><button class="border-0 text-primary bg-transparent" type="submit"><i th:if="${!message.isRead}" class="fa-solid fa-envelope"></i><i th:unless="${!message.isRead}" class="fa-regular fa-envelope-open"></i></button></form>
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

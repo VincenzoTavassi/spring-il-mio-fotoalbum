@@ -1,9 +1,12 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{/fragments/resources :: head(title = ${foto.id != null ? 'Modifica ' + foto.title : 'Crea una nuova foto'})}">
-<body th:with="isEdit =${foto.id != null}">
+<body th:with="isEdit =${foto.id != null}" class="bg-black">
 <div class="container">
-    <h1 class="text-center my-3" th:text="${isEdit ? 'Modifica foto ' + foto.title : 'Crea una nuova foto'}"></h1>
+    <h1 class="text-center text-warning my-3" th:text="${isEdit ? 'Modifica foto ' + foto.title : 'Crea una nuova foto'}"></h1>
+    <div class="card bg-dark text-light">
+
+
 <form
         th:with="formAction=${isEdit ? '/foto/edit' : '/foto/create'}"
         th:action="${formAction}"
@@ -56,7 +59,7 @@
         <a class="btn btn-outline-warning" href="/foto">Torna alla Home</a>
     </div>
 </form>
-
+    </div>
 </div>
 </body>
 </html>

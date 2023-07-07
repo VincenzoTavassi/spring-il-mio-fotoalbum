@@ -11,3 +11,6 @@ INSERT INTO `foto_categories` (`fotos_id`, `categories_id`) VALUES ('1', '2');
 INSERT INTO `foto_categories` (`fotos_id`, `categories_id`) VALUES ('2', '4');
 INSERT INTO `foto_categories` (`fotos_id`, `categories_id`) VALUES ('3', '2');
 INSERT INTO `foto_categories` (`fotos_id`, `categories_id`) VALUES ('4', '3');
+
+INSERT INTO `user_message` (`created_at`, `email`, `is_read`, `text`) VALUES ('2023-05-13 11:12:03.000000', 'antonio@moltimessaggi.com', false, 'Ciao, come stai? Spero bene. Bellissima l\'ultima foto ritratto!');
+INSERT INTO `user_message` (`created_at`, `email`, `is_read`, `text`) VALUES ('2023-06-13 10:12:03.000000', 'laura@pochimessaggi.com', true, 'Hai sentito Antonio? Come sta? Ha fatto belle foto?');

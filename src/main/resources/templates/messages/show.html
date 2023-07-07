@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{/fragments/resources :: head(title = 'Messaggio ' + ${message.id})}">
+<body class="bg-black">
+<div class="container">
+    <h1 class="text-center text-light my-3" th:text="|Messaggio ${message.id}|"></h1>
+    <div class="row justify-content-center">
+        <div class="card bg-dark text-light col-8">
+            <div class="card-body d-flex">
+                <div class="mx-5">
+                    <h5 class="card-title" th:text="${message.email}"></h5>
+                    <p class="card-text" th:text="${message.text}"></p>
+                    <h5 class="small">Data creazione</h5>
+                    <p th:text="*{#temporals.format(message.createdAt, 'dd/MM/yyyy')}"></p>
+                </div>
+            </div>
+            <div class="card-body text-center">
+                <a href="/messages" class="card-link btn btn-outline-warning">Torna ai messaggi</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>
