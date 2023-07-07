@@ -1,5 +1,6 @@
 package com.project.fotoalbum.controllers;
 
+import com.project.fotoalbum.dto.FotoForm;
 import com.project.fotoalbum.exceptions.FotoNotFoundException;
 import com.project.fotoalbum.messages.Message;
 import com.project.fotoalbum.messages.MessageType;
@@ -54,7 +55,7 @@ public class FotoController {
 
     @GetMapping("foto/create")
     public String create(Model model) {
-        Foto foto = new Foto();
+        FotoForm foto = new FotoForm();
         List<Category> categories = categoryRepository.findAll();
         model.addAttribute("foto", foto);
         model.addAttribute("categories", categories);
@@ -63,7 +64,7 @@ public class FotoController {
 
     @PostMapping("foto/create")
     public String create(
-            @Valid @ModelAttribute("foto") Foto foto,
+            @Valid @ModelAttribute("foto") FotoForm foto,
             BindingResult bindingResult,
             Model model,
             RedirectAttributes redirectAttributes) {
@@ -83,7 +84,8 @@ public class FotoController {
     @GetMapping("foto/edit/{id}")
     public String edit(@PathVariable Integer id, Model model) {
         try {
-            Foto fotoToUpdate = fotoService.getById(id);
+            Foto foto = fotoService.getById(id);
+            FotoForm fotoToUpdate = fotoService.fromFotoToFotoForm(foto);
             model.addAttribute("foto", fotoToUpdate);
             model.addAttribute("categories", categoryRepository.findAll());
         } catch (FotoNotFoundException e) {
@@ -94,7 +96,7 @@ public class FotoController {
 
     @PostMapping("foto/edit")
     public String update(
-            @Valid @ModelAttribute("foto") Foto foto,
+            @Valid @ModelAttribute("foto") FotoForm foto,
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes,
             Model model

@@ -1,37 +1,29 @@
-package com.project.fotoalbum.models;
+package com.project.fotoalbum.dto;
 
+import com.project.fotoalbum.models.Category;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-public class Foto {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class FotoForm {
     private Integer id;
     @NotNull
     @NotBlank(message = "Il titolo deve essere valorizzato")
-    @Column(nullable = false)
     private String title;
     private String pictureUrl;
     private String description;
-    @Column(nullable = false)
+    @NotNull
     private boolean visible;
-
-    @ManyToMany
     private List<Category> categories = new ArrayList<>();
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private MultipartFile imageFile;
 
-    @Lob
-    @Column(length = 16777215)
-    private byte[] DBimage;
+    private LocalDateTime createdAt;
 
     public Integer getId() {
         return id;
@@ -81,27 +73,19 @@ public class Foto {
         this.categories = categories;
     }
 
+    public MultipartFile getImageFile() {
+        return imageFile;
+    }
+
+    public void setImageFile(MultipartFile imageFile) {
+        this.imageFile = imageFile;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public byte[] getDBimage() {
-        return DBimage;
-    }
-
-    public void setDBimage(byte[] DBimage) {
-        this.DBimage = DBimage;
     }
 }
