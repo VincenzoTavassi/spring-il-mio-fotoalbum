@@ -26,7 +26,7 @@
     </div>
     <div class="col-4">
         <label for="foto-picture">URL dell'immagine</label>
-        <input type="url" class="form-control" id="foto-picture" th:field="*{pictureUrl}"
+        <input type="text" class="form-control" id="foto-picture" th:field="*{pictureUrl}"
                th:errorClass="is-invalid">
         <div th:if="${#fields.hasErrors('pictureUrl')}" class="invalid-feedback">
             <div th:each="error : ${#fields.errors('pictureUrl')}" th:text="${error}"></div>
@@ -54,12 +54,18 @@
         <div th:if="${#fields.hasErrors('description')}" class="invalid-feedback">
             <div th:each="error : ${#fields.errors('description')}" th:text="${error}"></div>
         </div>
+        <div class="d-flex align-items-center justify-content-center">
+
+        <div class="text-center my-4 me-4">
+            <img th:src="${foto.pictureUrl}" width="200px">
+        </div>
         <div class="input-group mb-3 my-3">
             <label class="input-group-text" for="foto-file">Inserisci una foto</label>
             <input type="file" class="form-control" id="foto-file" th:field="*{imageFile}">
-<!--        <div th:if="${#fields.hasErrors('foto-file')}" class="invalid-feedback">-->
-<!--            <div th:each="error : ${#fields.errors('foto-file')}" th:text="${error}"></div>-->
-<!--        </div>-->
+        <div th:if="${#fields.hasErrors('imageFile')}" class="invalid-feedback">
+            <div th:each="error : ${#fields.errors('imageFile')}" th:text="${error}"></div>
+        </div>
+        </div>
         </div>
     </div>
 

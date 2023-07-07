@@ -52,10 +52,12 @@ public class FotoService {
         fotoToSave.setCategories(foto.getCategories());
         fotoToSave.setDescription(foto.getDescription());
         fotoToSave.setTitle(foto.getTitle());
-        fotoToSave.setPictureUrl(foto.getPictureUrl());
         fotoToSave.setVisible(foto.isVisible());
         fotoToSave.setDBimage(foto.getDBimage());
-        return fotoRepository.save(foto);
+        fotoRepository.save(fotoToSave);
+        if(fotoToSave.getDBimage() != null) fotoToSave.setPictureUrl("/files/" + fotoToSave.getId());
+        else fotoToSave.setPictureUrl(foto.getPictureUrl());
+        return fotoRepository.save(fotoToSave);
     }
 
     public Foto create(FotoForm fotoForm) {
@@ -69,8 +71,9 @@ public class FotoService {
         fotoToUpdate.setCategories(foto.getCategories());
         fotoToUpdate.setDescription(foto.getDescription());
         fotoToUpdate.setTitle(foto.getTitle());
-        fotoToUpdate.setPictureUrl(foto.getPictureUrl());
         fotoToUpdate.setVisible(foto.isVisible());
+        if(foto.getDBimage() != null) fotoToUpdate.setPictureUrl("/files/" + fotoToUpdate.getId());
+        else fotoToUpdate.setPictureUrl(foto.getPictureUrl());
         return fotoRepository.save(fotoToUpdate);
     }
 
@@ -82,7 +85,8 @@ public class FotoService {
         fotoDb.setDescription(fotoToSave.getDescription());
         fotoDb.setTitle(fotoToSave.getTitle());
         fotoDb.setVisible(fotoToSave.isVisible());
-        fotoDb.setPictureUrl(fotoToSave.getPictureUrl());
+        if(fotoToSave.getDBimage() != null) fotoDb.setPictureUrl("/files/" + foto.getId());
+        else fotoDb.setPictureUrl(foto.getPictureUrl());
         fotoDb.setUpdatedAt(LocalDateTime.now());
         return fotoRepository.save(fotoDb);
     }
