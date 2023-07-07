@@ -72,6 +72,7 @@ public class FotoService {
         fotoToUpdate.setDescription(foto.getDescription());
         fotoToUpdate.setTitle(foto.getTitle());
         fotoToUpdate.setVisible(foto.isVisible());
+        // Se è presente la DB image, setta la URL della foto con il path del file locale
         if(foto.getDBimage() != null) fotoToUpdate.setPictureUrl("/files/" + fotoToUpdate.getId());
         else fotoToUpdate.setPictureUrl(foto.getPictureUrl());
         return fotoRepository.save(fotoToUpdate);
@@ -85,6 +86,7 @@ public class FotoService {
         fotoDb.setDescription(fotoToSave.getDescription());
         fotoDb.setTitle(fotoToSave.getTitle());
         fotoDb.setVisible(fotoToSave.isVisible());
+        // Se è presente la DB image, setta la URL della foto con il path del file locale
         if(fotoToSave.getDBimage() != null) fotoDb.setPictureUrl("/files/" + foto.getId());
         else fotoDb.setPictureUrl(foto.getPictureUrl());
         fotoDb.setUpdatedAt(LocalDateTime.now());

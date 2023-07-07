@@ -14,3 +14,11 @@ INSERT INTO `foto_categories` (`fotos_id`, `categories_id`) VALUES ('4', '3');
 
 INSERT INTO `user_message` (`created_at`, `email`, `is_read`, `text`) VALUES ('2023-05-13 11:12:03.000000', 'antonio@moltimessaggi.com', false, 'Ciao, come stai? Spero bene. Bellissima l\'ultima foto ritratto!');
 INSERT INTO `user_message` (`created_at`, `email`, `is_read`, `text`) VALUES ('2023-06-13 10:12:03.000000', 'laura@pochimessaggi.com', true, 'Hai sentito Antonio? Come sta? Ha fatto belle foto?');
+
+
+INSERT INTO roles (id, name) VALUES(1,'ADMIN');
+INSERT INTO roles (id, name) VALUES(2,'USER');
+INSERT INTO users (id, email, name, lastname, password) VALUES(1, 'admin@fotoalbum.com', 'Admin', 'Admin', '{noop}admin');
+INSERT INTO users (id, email, name, lastname, password) VALUES(2, 'user@fotoalbum.com', 'Max', 'User', '{noop}user');
+INSERT INTO users_roles (roles_id, user_id) VALUES(1, 1);
+INSERT INTO users_roles (roles_id, user_id) VALUES(2, 2);

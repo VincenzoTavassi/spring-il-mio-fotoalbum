@@ -20,21 +20,6 @@ public class UserMessageRestController {
     @Autowired
     UserMessageRepository userMessageRepository;
 
-
-
-    //
-//    @GetMapping
-//    public List<UserMessage> index() {
-//        return userMessageRepository.findAll();
-//    }
-
-//    @GetMapping("/{id}")
-//    public UserMessage getById(@PathVariable Integer id) {
-//        Optional<UserMessage> foundMessage = userMessageRepository.findById(id);
-//        if (foundMessage.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-//        else return foundMessage.get();
-//    }
-
     @PostMapping("/create")
     public UserMessage create(@Valid @RequestBody UserMessage userMessage) {
         try {
