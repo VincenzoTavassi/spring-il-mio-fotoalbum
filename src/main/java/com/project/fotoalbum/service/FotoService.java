@@ -6,6 +6,7 @@ import com.project.fotoalbum.models.Foto;
 import com.project.fotoalbum.repository.FotoRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,6 +22,9 @@ public class FotoService {
 
 @Autowired
     FotoRepository fotoRepository;
+
+@Autowired
+    Environment env;
 
 // Ottieni tutte le foto con query param opzionale e booleano visibile
     public List<Foto> getAll(boolean visible, Optional<String> keyword) {
@@ -53,9 +57,9 @@ public class FotoService {
         fotoToSave.setDescription(foto.getDescription());
         fotoToSave.setTitle(foto.getTitle());
         fotoToSave.setVisible(foto.isVisible());
-        fotoToSave.setDBimage(foto.getDBimage());
+        if (foto.getDBimage() != null) fotoToSave.setDBimage(foto.getDBimage());
         fotoRepository.save(fotoToSave);
-        if(fotoToSave.getDBimage() != null) fotoToSave.setPictureUrl("/files/" + fotoToSave.getId());
+        if(fotoToSave.getDBimage() != null) fotoToSave.setPictureUrl(env.getProperty("localpath") + "/files/" + fotoToSave.getId());
         else fotoToSave.setPictureUrl(foto.getPictureUrl());
         return fotoRepository.save(fotoToSave);
     }
@@ -73,7 +77,7 @@ public class FotoService {
         fotoToUpdate.setTitle(foto.getTitle());
         fotoToUpdate.setVisible(foto.isVisible());
         // Se è presente la DB image, setta la URL della foto con il path del file locale
-        if(foto.getDBimage() != null) fotoToUpdate.setPictureUrl("/files/" + fotoToUpdate.getId());
+        if(foto.getDBimage() != null) fotoToUpdate.setPictureUrl(env.getProperty("localpath") + "/files/" + fotoToUpdate.getId());
         else fotoToUpdate.setPictureUrl(foto.getPictureUrl());
         return fotoRepository.save(fotoToUpdate);
     }
@@ -81,13 +85,14 @@ public class FotoService {
     public Foto edit(FotoForm foto) {
         Foto fotoToSave = fromFotoFormToFoto(foto);
         Foto fotoDb = getById(foto.getId());
-        fotoDb.setDBimage(fotoToSave.getDBimage());
+        // Setta la db image solo se presente
+        if(fotoToSave.getDBimage() != null) fotoDb.setDBimage(fotoToSave.getDBimage());
         fotoDb.setCategories(fotoToSave.getCategories());
         fotoDb.setDescription(fotoToSave.getDescription());
         fotoDb.setTitle(fotoToSave.getTitle());
         fotoDb.setVisible(fotoToSave.isVisible());
         // Se è presente la DB image, setta la URL della foto con il path del file locale
-        if(fotoToSave.getDBimage() != null) fotoDb.setPictureUrl("/files/" + foto.getId());
+        if(fotoToSave.getDBimage() != null) fotoDb.setPictureUrl(env.getProperty("localpath") + "/files/" + foto.getId());
         else fotoDb.setPictureUrl(foto.getPictureUrl());
         fotoDb.setUpdatedAt(LocalDateTime.now());
         return fotoRepository.save(fotoDb);
@@ -112,7 +117,9 @@ public class FotoService {
         fotoToSave.setPictureUrl(fotoForm.getPictureUrl());
         fotoToSave.setCategories(fotoForm.getCategories());
         // Invoco il metodo custom per conversione in bytes array
-        fotoToSave.setDBimage(multipartFileToByteArray(fotoForm.getImageFile()));
+        if(fotoForm.getImageFile() != null) {
+            fotoToSave.setDBimage(multipartFileToByteArray(fotoForm.getImageFile()));
+        }
         return fotoToSave;
     }
 
