@@ -1,6 +1,7 @@
 package com.project.fotoalbum.service;
 
 import com.project.fotoalbum.dto.FotoForm;
+import com.project.fotoalbum.exceptions.FotoIsRequiredException;
 import com.project.fotoalbum.exceptions.FotoNotFoundException;
 import com.project.fotoalbum.models.Foto;
 import com.project.fotoalbum.repository.FotoRepository;
@@ -64,8 +65,11 @@ public class FotoService {
         return fotoRepository.save(fotoToSave);
     }
 
-    public Foto create(FotoForm fotoForm) {
+    public Foto create(FotoForm fotoForm) throws FotoIsRequiredException {
         Foto fotoToSave = fromFotoFormToFoto(fotoForm);
+        if (fotoToSave.getDBimage() == null && fotoToSave.getPictureUrl().isBlank()) {
+            throw new FotoIsRequiredException("Sono necessari la url oppure l'upload del file dell'immagine");
+        }
         return create(fotoToSave);
     }
 
@@ -82,8 +86,11 @@ public class FotoService {
         return fotoRepository.save(fotoToUpdate);
     }
 
-    public Foto edit(FotoForm foto) {
+    public Foto edit(FotoForm foto) throws FotoIsRequiredException {
         Foto fotoToSave = fromFotoFormToFoto(foto);
+        if (fotoToSave.getDBimage() == null && fotoToSave.getPictureUrl().isBlank()) {
+            throw new FotoIsRequiredException("Sono necessari la url oppure l'upload del file dell'immagine");
+        }
         Foto fotoDb = getById(foto.getId());
         // Setta la db image solo se presente
         if(fotoToSave.getDBimage() != null) fotoDb.setDBimage(fotoToSave.getDBimage());

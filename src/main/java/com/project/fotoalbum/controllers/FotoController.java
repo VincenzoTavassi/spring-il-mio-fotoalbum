@@ -1,6 +1,7 @@
 package com.project.fotoalbum.controllers;
 
 import com.project.fotoalbum.dto.FotoForm;
+import com.project.fotoalbum.exceptions.FotoIsRequiredException;
 import com.project.fotoalbum.exceptions.FotoNotFoundException;
 import com.project.fotoalbum.messages.Message;
 import com.project.fotoalbum.messages.MessageType;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -69,14 +71,15 @@ public class FotoController {
             BindingResult bindingResult,
             Model model,
             RedirectAttributes redirectAttributes) {
+        try {
+            fotoService.create(foto);
+        } catch (FotoIsRequiredException e) {
+            bindingResult.addError(new FieldError("foto", "pictureUrl", foto.getPictureUrl(), false, null, null,
+                    e.getMessage()));
+        }
         if(bindingResult.hasErrors()) {
             model.addAttribute("categories", categoryRepository.findAll());
             return "foto/form";
-        }
-        try {
-            fotoService.create(foto);
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
         redirectAttributes.addFlashAttribute("message", new Message(MessageType.SUCCESS, "Foto creata con successo."));
         return "redirect:/foto";
@@ -102,15 +105,18 @@ public class FotoController {
             RedirectAttributes redirectAttributes,
             Model model
             ) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("categories", categoryRepository.findAll());
-            return "foto/form";
-        }
         try {
             fotoService.edit(foto);
         } catch (FotoNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (FotoIsRequiredException e) {
+            bindingResult.addError(new FieldError("foto", "pictureUrl", foto.getPictureUrl(), false, null, null,
+                    e.getMessage()));
         }
+            if (bindingResult.hasErrors()) {
+                model.addAttribute("categories", categoryRepository.findAll());
+                return "foto/form";
+            }
         redirectAttributes.addFlashAttribute("message", new Message(MessageType.SUCCESS, "Foto modificata con successo."));
         return "redirect:/foto";
     }
