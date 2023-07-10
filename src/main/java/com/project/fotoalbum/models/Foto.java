@@ -27,6 +27,9 @@ public class Foto {
     @ManyToMany
     private List<Category> categories = new ArrayList<>();
 
+    @ManyToOne
+    private User user;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -105,5 +108,13 @@ public class Foto {
 
     public void setDBimage(byte[] DBimage) {
         this.DBimage = DBimage;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

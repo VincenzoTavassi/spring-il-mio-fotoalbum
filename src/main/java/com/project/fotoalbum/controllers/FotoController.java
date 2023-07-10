@@ -9,9 +9,11 @@ import com.project.fotoalbum.models.Category;
 import com.project.fotoalbum.models.Foto;
 import com.project.fotoalbum.repository.CategoryRepository;
 import com.project.fotoalbum.service.FotoService;
+import jakarta.security.auth.message.AuthException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -40,28 +42,38 @@ public class FotoController {
         return "redirect:/foto";
     }
     @GetMapping("/foto")
-    public String index(@RequestParam Optional<String> keyword, Model model) {
+    public String index(
+            @RequestParam Optional<String> keyword,
+            Model model,
+            Authentication authentication) {
+        String authUser = authentication.getName();
         List<Foto> fotoList = null;
-        if (keyword.isPresent()) fotoList = fotoService.getAll(false, keyword);
-        else fotoList = fotoService.getAll(false, Optional.empty());
+        if (keyword.isPresent()) fotoList = fotoService.getByActiveUser(authUser, keyword);
+        else fotoList = fotoService.getByActiveUser(authUser, Optional.empty());
         model.addAttribute("fotoList", fotoList);
         model.addAttribute("keyword", keyword.orElse(""));
         return "foto/index";
     }
 
     @GetMapping("/foto/{id}")
-    public String show(@PathVariable Integer id, Model model) {
-        Foto foto = fotoService.getById(id);
+    public String show(@PathVariable Integer id, Model model, Authentication authentication) {
+        Foto foto = null;
+        try {
+            foto = fotoService.getByIdWithAuth(id, authentication.getName());
+        } catch (AuthException e) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
+        }
         model.addAttribute("foto", foto);
         return "foto/show";
     }
 
     @GetMapping("foto/create")
-    public String create(Model model) {
+    public String create(Model model, Authentication authentication) {
         FotoForm foto = new FotoForm();
         List<Category> categories = categoryRepository.findAll();
         model.addAttribute("foto", foto);
         model.addAttribute("categories", categories);
+        model.addAttribute("user", authentication.getName());
         return "foto/form";
     }
 
@@ -70,9 +82,11 @@ public class FotoController {
             @Valid @ModelAttribute("foto") FotoForm foto,
             BindingResult bindingResult,
             Model model,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes,
+            Authentication authentication
+    ) {
         try {
-            fotoService.create(foto);
+            fotoService.create(foto, authentication.getName());
         } catch (FotoIsRequiredException e) {
             bindingResult.addError(new FieldError("foto", "pictureUrl", foto.getPictureUrl(), false, null, null,
                     e.getMessage()));
@@ -86,14 +100,17 @@ public class FotoController {
     }
 
     @GetMapping("foto/edit/{id}")
-    public String edit(@PathVariable Integer id, Model model) {
+    public String edit(@PathVariable Integer id, Model model, Authentication authentication) {
         try {
-            Foto foto = fotoService.getById(id);
+            Foto foto = fotoService.getByIdWithAuth(id, authentication.getName());
             FotoForm fotoToUpdate = fotoService.fromFotoToFotoForm(foto);
             model.addAttribute("foto", fotoToUpdate);
             model.addAttribute("categories", categoryRepository.findAll());
+            model.addAttribute("user", authentication.getName());
         } catch (FotoNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch(AuthException e) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
         }
         return "foto/form";
     }
@@ -103,10 +120,13 @@ public class FotoController {
             @Valid @ModelAttribute("foto") FotoForm foto,
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes,
-            Model model
+            Model model,
+            Authentication authentication
             ) {
         try {
-            fotoService.edit(foto);
+            fotoService.edit(foto, authentication.getName());
+        } catch (AuthException e) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
         } catch (FotoNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (FotoIsRequiredException e) {
@@ -122,11 +142,17 @@ public class FotoController {
     }
 
     @PostMapping("foto/delete/{id}")
-    public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+    public String delete(
+            @PathVariable Integer id,
+            RedirectAttributes redirectAttributes,
+            Authentication authentication
+    ) {
        try {
-           fotoService.delete(id);
+           fotoService.delete(id, authentication.getName());
        } catch (FotoNotFoundException e) {
            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+       } catch (AuthException e) {
+           throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
        }
         redirectAttributes.addFlashAttribute("message", new Message(MessageType.SUCCESS, "Foto eliminata con successo."));
        return "redirect:/foto";

@@ -1,6 +1,7 @@
 package com.project.fotoalbum.dto;
 
 import com.project.fotoalbum.models.Category;
+import com.project.fotoalbum.models.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,6 +25,8 @@ public class FotoForm {
     private MultipartFile imageFile;
 
     private LocalDateTime createdAt;
+
+    private User user;
 
     public Integer getId() {
         return id;
@@ -87,5 +90,13 @@ public class FotoForm {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

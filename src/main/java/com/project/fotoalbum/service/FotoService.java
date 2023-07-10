@@ -4,7 +4,11 @@ import com.project.fotoalbum.dto.FotoForm;
 import com.project.fotoalbum.exceptions.FotoIsRequiredException;
 import com.project.fotoalbum.exceptions.FotoNotFoundException;
 import com.project.fotoalbum.models.Foto;
+import com.project.fotoalbum.models.Role;
+import com.project.fotoalbum.models.User;
 import com.project.fotoalbum.repository.FotoRepository;
+import com.project.fotoalbum.repository.UserRepository;
+import jakarta.security.auth.message.AuthException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -17,15 +21,17 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class FotoService {
 
 @Autowired
-    FotoRepository fotoRepository;
-
+FotoRepository fotoRepository;
 @Autowired
-    Environment env;
+Environment env;
+@Autowired
+UserRepository userRepository;
 
 // Ottieni tutte le foto con query param opzionale e booleano visibile
     public List<Foto> getAll(boolean visible, Optional<String> keyword) {
@@ -44,10 +50,32 @@ public class FotoService {
         return fotoList;
     }
 
+    // Ottieni le foto dell'utente corrente
+    public List<Foto> getByActiveUser(String authUser, Optional<String> keyword) {
+        User authUsername = userRepository.findByEmail(authUser).get();
+        if(isAdmin(authUser)) {
+            // Se l'utente loggato è un admin ritorno tutte le foto
+                if (keyword.isPresent()) return getAll(false, keyword); // Filtrate se c'è una keyword
+                else return getAll(false, Optional.empty());
+        } // Altrimenti ritorno le foto dell'utente loggato
+        if(keyword.isPresent()) return fotoRepository.findByUserIdAndTitleContainingIgnoreCase(authUsername.getId(), keyword.get());
+        else return fotoRepository.findByUserId(authUsername.getId());
+    }
+
     // Ottieni foto specifica
     public Foto getById(Integer id) throws FotoNotFoundException {
         Foto foto = null;
         if (fotoExists(id)) foto = fotoRepository.findById(id).get();
+        return foto;
+    }
+
+    public Foto getByIdWithAuth(Integer id, String authUser) throws AuthException {
+        User authUsername = userRepository.findByEmail(authUser).get();
+        if(isAdmin(authUser)) getById(id); // Se l'utente è un admin, skip del controllo di sicurezza
+        Foto foto = null;
+        if (fotoExists(id)) foto = fotoRepository.findById(id).get();
+        // Se l'username associato alla foto non è presente oppure non è identico all'username dell'utente loggato, lancio errore
+        if (foto.getUser() == null || !foto.getUser().getEmail().equals(authUsername.getEmail())) throw new AuthException("Utente non autorizzato a visualizzare l'elemento");
         return foto;
     }
 
@@ -58,6 +86,7 @@ public class FotoService {
         fotoToSave.setDescription(foto.getDescription());
         fotoToSave.setTitle(foto.getTitle());
         fotoToSave.setVisible(foto.isVisible());
+        if (foto.getUser() != null) fotoToSave.setUser(foto.getUser());
         if (foto.getDBimage() != null) fotoToSave.setDBimage(foto.getDBimage());
         fotoRepository.save(fotoToSave);
         if(fotoToSave.getDBimage() != null) fotoToSave.setPictureUrl(env.getProperty("localpath") + "/files/" + fotoToSave.getId());
@@ -65,8 +94,12 @@ public class FotoService {
         return fotoRepository.save(fotoToSave);
     }
 
-    public Foto create(FotoForm fotoForm) throws FotoIsRequiredException {
+    public Foto create(FotoForm fotoForm, String authUser) throws FotoIsRequiredException {
         Foto fotoToSave = fromFotoFormToFoto(fotoForm);
+        if(!isAdmin(authUser)) { // Se l'utente non è admin, allora lo setto come proprietario della foto
+            User user = userRepository.findByEmail(authUser).get();
+            fotoToSave.setUser(user);
+        }
         if (fotoToSave.getDBimage() == null && fotoToSave.getPictureUrl().isBlank()) {
             throw new FotoIsRequiredException("Sono necessari la url oppure l'upload del file dell'immagine");
         }
@@ -86,12 +119,12 @@ public class FotoService {
         return fotoRepository.save(fotoToUpdate);
     }
 
-    public Foto edit(FotoForm foto) throws FotoIsRequiredException {
+    public Foto edit(FotoForm foto, String authUser) throws FotoIsRequiredException, AuthException {
+        Foto fotoDb = getByIdWithAuth(foto.getId(), authUser);
         Foto fotoToSave = fromFotoFormToFoto(foto);
         if (fotoToSave.getDBimage() == null && fotoToSave.getPictureUrl().isBlank()) {
             throw new FotoIsRequiredException("Sono necessari la url oppure l'upload del file dell'immagine");
         }
-        Foto fotoDb = getById(foto.getId());
         // Setta la db image solo se presente
         if(fotoToSave.getDBimage() != null) fotoDb.setDBimage(fotoToSave.getDBimage());
         fotoDb.setCategories(fotoToSave.getCategories());
@@ -105,8 +138,25 @@ public class FotoService {
         return fotoRepository.save(fotoDb);
     }
 
-    public void delete(Integer id) throws FotoNotFoundException {
-        fotoRepository.delete(getById(id));
+    public void delete(Integer id, String authUser) throws FotoNotFoundException, AuthException {
+        if(isAdmin(authUser)) fotoRepository.delete(getById(id));
+        else {
+            Foto foto = fotoRepository.findById(id).get();
+            // Se l'email dell'utente loggato non è uguale all'username, l'utente non è autorizzato
+            if(!foto.getUser().getEmail().equals(authUser)) throw new AuthException("Utente non autorizzato all'operazione");
+            fotoRepository.delete(getById(id));
+        }
+    }
+
+    // CHECK SE UTENTE E' ADMIN
+    public boolean isAdmin(String authUser) {
+        User authUsername = userRepository.findByEmail(authUser).get();
+        Set<Role> authUserRoles = authUsername.getRoles();
+        for (Role role : authUserRoles) {
+            if (role.getName().equals("ADMIN")) return true;
+            }
+        return false;
+
     }
 
     // METODI DI CHECK E TASFORMAZIONE DTO

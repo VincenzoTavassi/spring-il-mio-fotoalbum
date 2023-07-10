@@ -15,6 +15,7 @@
         enctype="multipart/form-data"
         class="row my-3 justify-content-center">
     <input th:if="${isEdit}" type="hidden" th:field="*{id}">
+    <input type="hidden" th:field="*{user}">
 
     <div class="col-3">
         <label for="foto-title">Titolo della foto</label>

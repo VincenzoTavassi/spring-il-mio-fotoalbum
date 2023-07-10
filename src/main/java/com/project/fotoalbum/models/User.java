@@ -1,6 +1,7 @@
 package com.project.fotoalbum.models;
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -19,6 +20,10 @@ public class User {
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
+
+    // BONUS
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE})
+    private List<Foto> fotos;
 
 
     public Integer getId() {
@@ -67,5 +72,13 @@ public class User {
 
     public void setLastname(String lastname) {
         this.lastname = lastname;
+    }
+
+    public List<Foto> getFotos() {
+        return fotos;
+    }
+
+    public void setFotos(List<Foto> fotos) {
+        this.fotos = fotos;
     }
 }

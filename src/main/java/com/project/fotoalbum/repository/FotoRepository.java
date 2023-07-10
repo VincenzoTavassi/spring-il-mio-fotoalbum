@@ -10,6 +10,9 @@ public interface FotoRepository extends JpaRepository<Foto, Integer> {
     List<Foto> findByTitleContainingIgnoreCase(String searchTerm);
     List<Foto> findByTitleContainingIgnoreCaseAndVisibleTrue(String searchTerm);
     List<Foto> findByTitleContainingIgnoreCaseAndVisibleFalse(String searchTerm);
+
+    List<Foto> findByUserId(Integer id);
+    List<Foto> findByUserIdAndTitleContainingIgnoreCase(Integer id, String searchTerm);
     List<Foto> findByVisibleTrue();
     List<Foto> findByVisibleFalse();
 }

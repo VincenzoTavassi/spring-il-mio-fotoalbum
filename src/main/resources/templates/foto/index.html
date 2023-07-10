@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org">
 <head th:replace="~{/fragments/resources :: head(title = 'Lista delle foto')}">
 <body class="bg-black">
 
@@ -12,8 +12,9 @@
     <div class="bg-dark p-3 d-flex justify-content-between align-items-center">
     <div>
         <a class="btn btn-outline-warning" href="/foto/create">Aggiungi Foto</a>
-    <a class="btn btn-outline-warning" href="/categories">Categorie</a>
-    <a class="btn btn-outline-warning" href="/messages">Messaggi</a>
+    <a class="btn btn-outline-warning" href="/categories" sec:authorize="hasAuthority('ADMIN')">Categorie</a>
+    <a class="btn btn-outline-warning" href="/messages" sec:authorize="hasAuthority('ADMIN')">Messaggi</a>
+        <a th:href="@{/login?logout}" class="btn btn-outline-warning">Esci</a>
     </div>
             <form action="/foto" method="GET">
         <div class="input-group mb-3">
