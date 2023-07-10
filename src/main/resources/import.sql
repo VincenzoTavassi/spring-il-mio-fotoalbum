@@ -5,10 +5,13 @@ INSERT INTO `category` (`name`) VALUES ('natura');
 
 INSERT INTO roles (id, name) VALUES(1,'ADMIN');
 INSERT INTO roles (id, name) VALUES(2,'USER');
+INSERT INTO roles (id, name) VALUES(3,'SUPERADMIN');
 INSERT INTO users (id, email, name, lastname, password) VALUES(1, 'admin@fotoalbum.com', 'Admin', 'Admin', '{noop}admin');
 INSERT INTO users (id, email, name, lastname, password) VALUES(2, 'user@fotoalbum.com', 'Max', 'User', '{noop}user');
+INSERT INTO users (id, email, name, lastname, password) VALUES(3, 'superadmin@fotoalbum.com', 'Max', 'Superadmin', '{noop}superadmin');
 INSERT INTO users_roles (roles_id, user_id) VALUES(1, 1);
 INSERT INTO users_roles (roles_id, user_id) VALUES(2, 2);
+INSERT INTO users_roles (roles_id, user_id) VALUES(3, 3);
 
 
 INSERT INTO `foto` (`id`, `description`, `picture_url`, `title`, `visible`, `created_at`, `updated_at`) VALUES (NULL, 'Ritratto di un ragazzo affascinante.', 'https://picsum.photos/200/300?random=1', 'Ragazzo in blu', true, '2020-11-11', '2020-11-12');

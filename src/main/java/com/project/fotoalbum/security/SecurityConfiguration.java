@@ -34,7 +34,7 @@ public class SecurityConfiguration {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
 //                .requestMatchers(HttpMethod.POST).hasAuthority("ADMIN")
-                .requestMatchers("foto/**").hasAnyAuthority("ADMIN", "USER")
+                .requestMatchers("foto/**").hasAnyAuthority("ADMIN", "USER", "SUPERADMIN")
                 .requestMatchers("categories/**").hasAuthority("ADMIN")
                 .requestMatchers("messages/**").hasAuthority("ADMIN")
                 .requestMatchers("/**").permitAll()

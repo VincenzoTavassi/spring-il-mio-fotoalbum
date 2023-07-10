@@ -53,8 +53,8 @@ UserRepository userRepository;
     // Ottieni le foto dell'utente corrente
     public List<Foto> getByActiveUser(String authUser, Optional<String> keyword) {
         User authUsername = userRepository.findByEmail(authUser).get();
-        if(isAdmin(authUser)) {
-            // Se l'utente loggato è un admin ritorno tutte le foto
+        if(isAdmin(authUser) || isSuperAdmin(authUser)) {
+            // Se l'utente loggato è un admin o super admin ritorno tutte le foto
                 if (keyword.isPresent()) return getAll(false, keyword); // Filtrate se c'è una keyword
                 else return getAll(false, Optional.empty());
         } // Altrimenti ritorno le foto dell'utente loggato
@@ -71,10 +71,11 @@ UserRepository userRepository;
 
     public Foto getByIdWithAuth(Integer id, String authUser) throws AuthException {
         User authUsername = userRepository.findByEmail(authUser).get();
-        if(isAdmin(authUser)) getById(id); // Se l'utente è un admin, skip del controllo di sicurezza
+        if(isAdmin(authUser) || isSuperAdmin(authUser)) return getById(id); // Se l'utente è un admin o super admin, skip del controllo di sicurezza
         Foto foto = null;
         if (fotoExists(id)) foto = fotoRepository.findById(id).get();
         // Se l'username associato alla foto non è presente oppure non è identico all'username dell'utente loggato, lancio errore
+        assert foto != null;
         if (foto.getUser() == null || !foto.getUser().getEmail().equals(authUsername.getEmail())) throw new AuthException("Utente non autorizzato a visualizzare l'elemento");
         return foto;
     }
@@ -96,7 +97,7 @@ UserRepository userRepository;
 
     public Foto create(FotoForm fotoForm, String authUser) throws FotoIsRequiredException {
         Foto fotoToSave = fromFotoFormToFoto(fotoForm);
-        if(!isAdmin(authUser)) { // Se l'utente non è admin, allora lo setto come proprietario della foto
+        if(!isAdmin(authUser) && !isSuperAdmin(authUser)) { // Se l'utente non è admin o super admin, allora lo setto come proprietario della foto
             User user = userRepository.findByEmail(authUser).get();
             fotoToSave.setUser(user);
         }
@@ -156,7 +157,15 @@ UserRepository userRepository;
             if (role.getName().equals("ADMIN")) return true;
             }
         return false;
+    }
 
+    public boolean isSuperAdmin(String authUser) {
+        User authUsername = userRepository.findByEmail(authUser).get();
+        Set<Role> authUserRoles = authUsername.getRoles();
+        for (Role role : authUserRoles) {
+            if (role.getName().equals("SUPERADMIN")) return true;
+        }
+        return false;
     }
 
     // METODI DI CHECK E TASFORMAZIONE DTO
